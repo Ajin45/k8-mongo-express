@@ -36,11 +36,42 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mongodb-secret
-              key: mongo-root-password    
+              key: mongo-root-password   
+        
+        - name: ME_CONFIG_BASICAUTH_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-auth-user
+
+        - name: ME_CONFIG_BASICAUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-auth-pass        
 
         - name: ME_CONFIG_MONGODB_SERVER 
           valueFrom:
             configMapKeyRef:
               name: mongodb-configmap
               key: database_url
+---
+  
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-service
+  namespace: node-express-namespace
+  labels:
+    app: mongo-express
+spec:
+  selector:
+    app: mongo-express
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+      nodePort: 30000
+      
 
